@@ -31,6 +31,8 @@ import /vendor/etc/init/hw/init.device.rc
 import /vendor/etc/init/hw/init.safailnet.rc
 
 on early-init
+    # Disable EAS
+    write /proc/sys/kernel/sched_energy_aware 0
     mount debugfs debugfs /sys/kernel/debug
     chmod 0755 /sys/kernel/debug
 
@@ -519,6 +521,9 @@ on property:sys.boot_completed=1
     write /sys/class/drm/card0/device/idle_encoder_mask 1
     write /sys/class/drm/card0/device/idle_timeout_ms 100
 
+    # Enable EAS
+    write /proc/sys/kernel/sched_energy_aware 1
+
 # corefile limit
 on property:persist.debug.trace=1
     mkdir /data/core 0777 root root
@@ -1003,6 +1008,10 @@ service esepmdaemon /system/vendor/bin/esepmdaemon
 on charger
     setprop persist.sys.usb.config mass_storage
     load_system_props
+
+    # Enable EAS
+    write /proc/sys/kernel/sched_energy_aware 1
+
     start qcom-post-boot
 
 #add poweroffhandler
